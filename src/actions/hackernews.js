@@ -53,10 +53,10 @@ function receiveItems (source, json) {
   }
 }
 
-function fetchItems (source) {
+function fetchItems (source, item) {
   return dispatch => {
     dispatch(requestItems(source))
-    return getItem(source)
+    return getItem(item)
       .then(response => response.data)
       .then(res => dispatch(receiveItems(source, res)))
   }
@@ -83,7 +83,8 @@ function shouldFetchStories (state, source) {
   }
 }
 
-function shouldFetchItems (state, items) {
+function shouldFetchItems (state, source) {
+  const items = state.itemsBySource[source]
   if (!items) {
     return true
   } else {
@@ -106,11 +107,12 @@ export function getNext50 (source, stories, dispatch, getState) {
 export function getInitialData (source) {
   return (dispatch, getState) => {
     return dispatch(fetchStories(source)).then(() => {
+      const index = 50
       const stories = getState().storiesBySource[source].stories
-      stories.slice(0, 49).map((item) => {
-        return dispatch(fetchItems(item))
+      const items = stories.slice(0, index).map((item) => {
+        dispatch(fetchItems(source, item))
       })
-      dispatch(updateIndex(49))
+      dispatch(updateIndex(index))
     })
   }
 }
@@ -124,10 +126,10 @@ export function fetchStoriesIfNeeded (source) {
   }
 }
 
-export function fetchItemsIfNeeded (items) {
+export function fetchItemsIfNeeded (source) {
   return (dispatch, getState) => {
-    if (shouldFetchItems(getState(), items)) {
-      return dispatch(fetchItems(items))
+    if (shouldFetchItems(getState(), source)) {
+      return dispatch(getInitialData(source))
     }
   }
 }

@@ -13,7 +13,7 @@ const enhancers = compose(
 export default function configureStore(preloadedState) {
   return createStore(
     rootReducer,
-    preloadedState,
+    enhancers,
     applyMiddleware(
       thunkMiddleware,
       loggerMiddleware

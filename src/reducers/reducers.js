@@ -66,12 +66,11 @@ function items (
     case GET_ITEMS:
       return Object.assign({}, state, {
         isFetching: true,
-
       })
     case RECEIVE_ITEMS:
       return Object.assign({}, state, {
         isFetching: false,
-        items: action.items,
+        items: [...state.items, action.items],
         lastUpdated: action.receivedAt
       })
     default:

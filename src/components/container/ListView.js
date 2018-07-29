@@ -20,21 +20,12 @@ class ListView extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.onScroll, false)
-    const { dispatch, selectSource } = this.props
-    dispatch(getInitialData(selectSource)).then( () =>
-      console.log('data is ready')
-    )
+    const { dispatch, selectedSource } = this.props
+    dispatch(getInitialData(selectedSource))
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.onScroll, false)
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.selectSource !== prevProps.selectSource) {
-      const { dispatch, selectSource} = this.props
-      dispatch(fetchStoriesIfNeeded(selectSource))
-    }
   }
 
   onScroll = () => {
@@ -51,7 +42,8 @@ class ListView extends Component {
 
 
   render() {
-    const { selectedSource, stories, items, isFetching, lastUpdated } = this.props
+    const { selectedSource, stories, items, isFetching, lastUpdated, getState } = this.props
+    console.log('propa',this.props)
     return  (
       <React.Fragment>
           {isFetching && items.length === 0 && <Loader loaded={false} lines={4} length={20} width={10} radius={30}
@@ -74,7 +66,7 @@ class ListView extends Component {
 ListView.propTypes = {
   selectedSource: PropTypes.string.isRequired,
   stories: PropTypes.array.isRequired,
-  items: PropTypes.array,
+  items: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   maxLoaded: PropTypes.number.isRequired,
@@ -84,16 +76,16 @@ ListView.propTypes = {
 function mapStateToProps (state) {
   const { selectedSource, storiesBySource, itemsBySource, maxLoaded } = state
   const {
-    isFetching,
     lastUpdated,
     stories: stories,
   } = storiesBySource[selectedSource] || {
-    isFetching: true,
     stories: [],
   }
   const {
+    isFetching,
     items: items,
   } = itemsBySource[selectedSource] || {
+    isFetching: true,
     items: []
   }
 
