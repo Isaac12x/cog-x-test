@@ -18,25 +18,32 @@ class ListView extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.onScroll, false)
+    window.addEventListener('scroll', this.detectScrollToBottom, false)
     const { dispatch, selectedSource } = this.props
     dispatch(getInitialData(selectedSource))
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.onScroll, false)
+    window.removeEventListener('scroll', this.detectScrollToBottom, false)
   }
 
-  onScroll = () => {
-    if (
-      (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 200) &&
-      !this.props.isFetching
-    ) {
-      // here we need to append 50 more
-      //this.props.onPaginatedSearch();
-      const { stories, dispatch, getState, selectedSource }  = this.props;
-      dispatch(getNext50(selectedSource, stories, dispatch, getState))
+  isBottom = (element) => {
+     return element.getBoundingClientRect().bottom <= window.innerHeight;
+  }
+
+  detectScrollToBottom = () => {
+    const footer = document.getElementById('footer')
+    if (this.isBottom(footer) && !this.props.isFetching) {
+      this.onScroll()
     }
+  }
+
+
+  onScroll = () => {
+      // here we need to append 50 more
+      const { stories, selectedSource, dispatch } = this.props;
+      console.log('are any stories', stories)
+      dispatch(getNext50(selectedSource))
   }
 
 

@@ -92,27 +92,28 @@ function shouldFetchItems (state, source) {
   }
 }
 
-export function getNext50 (source, stories, dispatch, getState) {
-  const lastIndex = getState().maxLoaded
-  const newIndex = lastIndex + 50;
-  var items = []
-  const rem = stories.slice(lastIndex, newIndex).map(item =>
-    getItem(item)
-    .then(res => items.append(res))
-  ).then(dispatch(receiveItems(source, items)))
-  dispatch(updateIndex(newIndex))
+export function getNext50 (source) {
+  return (dispatch, getState) => {
+    const lastIndex = getState().maxLoaded
+    const newIndex = lastIndex + 50;
+    const stories = getState().storiesBySource[source].stories
+    const items = stories.slice(lastIndex, newIndex).map(item =>
+        dispatch(fetchItems(source, item))
+    )
+    dispatch(updateIndex(newIndex));
+  }
 }
 
 
 export function getInitialData (source) {
   return (dispatch, getState) => {
     return dispatch(fetchStories(source)).then(() => {
-      const index = 50
+      const index = 50;
       const stories = getState().storiesBySource[source].stories
       const items = stories.slice(0, index).map((item) => {
         dispatch(fetchItems(source, item))
       })
-      dispatch(updateIndex(index))
+      dispatch(updateIndex(index));
     })
   }
 }
