@@ -78,10 +78,10 @@ function items (
   }
 }
 
-function itemsBySource(state = {}, action) {
+function itemsBySource (state = {}, action) {
   switch (action.type) {
-    case RECEIVE_ITEMS:
     case GET_ITEMS:
+    case RECEIVE_ITEMS:
       return Object.assign({}, state, {
         [action.source]: items(state[action.source], action)
       })

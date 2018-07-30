@@ -118,14 +118,6 @@ export function getInitialData (source) {
 }
 
 
-export function fetchStoriesIfNeeded (source) {
-  return (dispatch, getState) => {
-    if (shouldFetchStories(getState(), source)) {
-      return dispatch(fetchStories(source))
-    }
-  }
-}
-
 export function fetchItemsIfNeeded (source) {
   return (dispatch, getState) => {
     if (shouldFetchItems(getState(), source)) {

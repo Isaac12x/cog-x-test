@@ -6,7 +6,6 @@ import Loader from 'react-loader';
 import ListItem from '../presentational/ListItem';
 import {
   selectSource,
-  fetchStoriesIfNeeded,
   fetchItemsIfNeeded,
   getInitialData,
   getNext50,
@@ -15,7 +14,7 @@ import {
 class ListView extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   componentDidMount() {
@@ -35,15 +34,14 @@ class ListView extends Component {
     ) {
       // here we need to append 50 more
       //this.props.onPaginatedSearch();
-      const { stories, dispatch, getState, source }  = this.props;
-      dispatch(getNext50(source, stories, dispatch, getState))
+      const { stories, dispatch, getState, selectedSource }  = this.props;
+      dispatch(getNext50(selectedSource, stories, dispatch, getState))
     }
   }
 
 
   render() {
-    const { selectedSource, stories, items, isFetching, lastUpdated, getState } = this.props
-    console.log('propa',this.props)
+    const { selectedSource, stories, items, isFetching, getState } = this.props
     return  (
       <React.Fragment>
           {isFetching && items.length === 0 && <Loader loaded={false} lines={4} length={20} width={10} radius={30}
@@ -53,7 +51,7 @@ class ListView extends Component {
                                                  loadedClassName="loadedContent"/>}
           {!isFetching && items.length === 0 && <h2>Failed loading.</h2>}
 
-          {items.length > 0 &&
+          {items.length > 49 &&
             <div style={{ opacity: isFetching ? 0.5 : 1 }}>
               <ListItem items={items} />
             </div>
@@ -65,10 +63,8 @@ class ListView extends Component {
 
 ListView.propTypes = {
   selectedSource: PropTypes.string.isRequired,
-  stories: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
-  lastUpdated: PropTypes.number,
   maxLoaded: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired
 }
@@ -76,7 +72,6 @@ ListView.propTypes = {
 function mapStateToProps (state) {
   const { selectedSource, storiesBySource, itemsBySource, maxLoaded } = state
   const {
-    lastUpdated,
     stories: stories,
   } = storiesBySource[selectedSource] || {
     stories: [],
@@ -84,7 +79,7 @@ function mapStateToProps (state) {
   const {
     isFetching,
     items: items,
-  } = itemsBySource[selectedSource] || {
+  } = itemsBySource['undefined'] || {
     isFetching: true,
     items: []
   }
@@ -94,7 +89,6 @@ function mapStateToProps (state) {
     stories,
     items,
     isFetching,
-    lastUpdated,
     maxLoaded
   }
 };

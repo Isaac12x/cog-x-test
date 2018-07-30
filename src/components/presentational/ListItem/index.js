@@ -17,13 +17,29 @@ import PropTypes from 'prop-types';
 //   )
 // }
 
-const ListItem = (props) => {
+const ListItem = ({ items }) => {
   return (
     <ul>
-      {this.props.items.map((item, i) =>
-          <a key={i} href="" noopener="true" noreferrer="true" target="_blank">
-            <li key={i}>{item.title}</li>
-         </a>)}
+      {items.map((item, i) =>
+        <div className="card" key={i}>
+          <header className="card-header">
+            <p className="card-header-title">
+                <li>{item.title} </li>
+              <p className="has-text-grey is-size-6">&nbsp; - {item.type} by {item.by} </p>
+            </p>
+
+            <a href={item.url} noopener="true" noreferrer="true" target="_blank" className="card-header-icon" aria-label="link">
+              <span className="icon">
+                <i className="fas fa-link"></i>
+              </span>
+            </a>
+            <a href="#" className="card-header-icon" aria-label="more options">
+              <span className="icon">
+                <i className="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </a>
+          </header>
+        </div>)}
 
     </ul>
   )
